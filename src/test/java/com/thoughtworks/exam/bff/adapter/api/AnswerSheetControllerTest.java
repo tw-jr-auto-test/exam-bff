@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureStubRunner
 @AutoConfigureMockMvc
-class ExaminationControllerTest {
+class AnswerSheetControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -41,31 +41,16 @@ class ExaminationControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
-
     @Test
-    public void should_create_examination_successfully() throws Exception {
-        CreateExaminationCommand createExaminationCommand = CreateExaminationCommand.builder()
-                .teacherId("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8i9040")
-                .paperId("8jk4l-k0d9ie7-4jk89l-t88irr7-h8i9040")
-                .duration(120)
-                .quizzes(Arrays.asList(
-                        CreateExaminationCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl1").score(10)
-                                .question("TDD是什么？").referenceAnswer("Test-Driven Development").build(),
-                        CreateExaminationCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl2").score(20)
-                                .question("DDD是什么？").referenceAnswer("Domain-Driven Design").build(),
-                        CreateExaminationCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl3").score(20)
-                                .question("SRP是什么？").referenceAnswer("Single Responsibility Principle").build(),
-                        CreateExaminationCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl4").score(20)
-                                .question("YAGNI是什么？").referenceAnswer("You aren't gonna need it").build(),
-                        CreateExaminationCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl5").score(30)
-                                .question("DI是什么？").referenceAnswer("Dependency Injection").build()))
-                .build();
-        String json = objectMapper.writeValueAsString(createExaminationCommand);
-        ResultActions resultActions = mockMvc.perform(post("/examinations")
+    public void should_create_answer_sheet_successfully() throws Exception {
+        ResultActions resultActions = mockMvc.perform(post("/examinations/9idk4-lokfu-jr874j3-h8d9j4-hor82kd77/answer-sheets")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(json))
+                .content("{\"studentId\":\"8jk4l-k0d9ie7-4jk89l-t88ijj6-h8i9040\"}"))
                 .andExpect(status().isCreated());
+
         String responseString = resultActions.andReturn().getResponse().getContentAsString();
-        assertThat(responseString).matches("[a-zA-Z-0-9]{36}");
+
+        CreateAnswerSheetDTO response = objectMapper.readValue(responseString, CreateAnswerSheetDTO.class);
+        assertThat(response.getAnswerSheetId()).matches("[a-zA-Z-0-9]{36}");
     }
 }

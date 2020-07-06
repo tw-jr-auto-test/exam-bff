@@ -1,5 +1,7 @@
 package com.thoughtworks.exam.bff.adapter.client.examination;
 
+import com.thoughtworks.exam.bff.adapter.client.answer_sheet.CreateAnswerSheetCommand;
+import com.thoughtworks.exam.bff.adapter.client.answer_sheet.CreateAnswerSheetDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Component;
@@ -23,4 +25,10 @@ public class ExaminationClient {
         return restTemplate.postForObject(host + ":" + port + "/examinations",
                 createExaminationCommand, ExaminationDTO.class).toString();
     }
+
+    public CreateAnswerSheetDTO createAnswerSheet(CreateAnswerSheetCommand command, String examinationId) {
+        return restTemplate.postForObject(host + ":" + port + "/examinations/" + examinationId + "/answer-sheets",
+                command, CreateAnswerSheetDTO.class);
+    }
+
 }

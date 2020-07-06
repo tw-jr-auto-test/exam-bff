@@ -1,23 +1,28 @@
 package com.thoughtworks.exam.bff.adapter.api;
 
-import com.thoughtworks.exam.bff.adapter.client.answer_sheet.CreateAnswerSheetCommand;
-import com.thoughtworks.exam.bff.adapter.client.answer_sheet.CreateAnswerSheetDTO;
-import com.thoughtworks.exam.bff.adapter.client.examination.ExaminationClient;
+import com.thoughtworks.exam.bff.adapter.client.answer_sheet.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/examinations/{examinationId}/answer-sheets")
 public class AnswerSheetController {
-    private final ExaminationClient examinationClient;
+    private final AnswerSheetClient answerSheetClient;
 
-    public AnswerSheetController(ExaminationClient examinationClient) {
-        this.examinationClient = examinationClient;
+    public AnswerSheetController(AnswerSheetClient answerSheetClient) {
+        this.answerSheetClient = answerSheetClient;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CreateAnswerSheetDTO create(@PathVariable("examinationId") String examinationId, @RequestBody CreateAnswerSheetCommand command) {
-        return examinationClient.createAnswerSheet(command, examinationId);
+        return answerSheetClient.createAnswerSheet(command, examinationId);
+    }
+
+    @PutMapping("/{answerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SubmitAnswerSheetDTO submitAnswer(@PathVariable("examinationId")String examinationId, @PathVariable("answerId")String answerId,
+                                             @RequestBody SubmitAnswerSheetCommand submitAnswerSheetCommand){
+        return answerSheetClient.submitAnswer(examinationId, answerId, submitAnswerSheetCommand);
     }
 }

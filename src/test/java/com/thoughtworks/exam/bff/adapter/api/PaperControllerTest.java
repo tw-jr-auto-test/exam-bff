@@ -1,6 +1,7 @@
 package com.thoughtworks.exam.bff.adapter.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.thoughtworks.exam.bff.adapter.client.paper.CreatePaperCommand;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,4 +59,20 @@ class PaperControllerTest {
         String responseString = resultActions.andReturn().getResponse().getContentAsString();
         assertThat(responseString).matches("[a-zA-Z-0-9]{36}");
     }
+
+    @Test
+    public void should_create_papers_fail_when_quiz_size_less_than_5() throws Exception {
+        CreatePaperCommand createPaperCommand = CreatePaperCommand.builder()
+                .teacherId("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8i9040")
+                .quizzes(Arrays.asList(CreatePaperCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl1").score(5).build(),
+                        CreatePaperCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl2").score(10).build(),
+                        CreatePaperCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl4").score(15).build(),
+                        CreatePaperCommand.Quiz.builder().id("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8ijsl6").score(30).build()))
+                .build();
+        mockMvc.perform(post("/papers")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new JsonMapper().writeValueAsString(createPaperCommand)))
+                .andExpect(status().isBadRequest());
+    }
+
 }

@@ -75,4 +75,19 @@ class AnswerSheetControllerTest {
         assertThat(response.getAnswer()).isEqualTo("a,b,c");
     }
 
+    @Test
+    public void should_submit_answer_sheet_failed_after_expired() throws Exception {
+        SubmitAnswerSheetCommand submitAnswerSheetCommand = SubmitAnswerSheetCommand.builder()
+                .studentId("8jk4l-k0d9ie7-4jk89l-t88ijj6-h8i9041")
+                .answer("a,b,c")
+                .startedTime(LocalDateTime.parse("2020-06-27T09:00:00"))
+                .submittedTime(LocalDateTime.parse("2020-06-27T12:30:00"))
+                .build();
+        mockMvc.perform(put("/examinations/9idk4-lokfu-jr874j3-h8d9j4-hor82kd77/answer-sheets/9idk4-lokfu-jr874j3-h8d9j4-ho7kdl8jh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(submitAnswerSheetCommand)))
+                .andExpect(status().isBadRequest());
+    }
+
+
 }
